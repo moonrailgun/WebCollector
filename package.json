@@ -1,0 +1,28 @@
+{
+  "name": "Collecter",
+  "version": "1.0.0",
+  "description": "NODEJS 的网页采集器",
+  "main": "app.js",
+  "dependencies": {
+    "bufferhelper": "^0.2.0",
+    "cheerio": "^0.19.0",
+    "iconv-lite": "^0.4.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moonrailgun/WebCollector.git"
+  },
+  "keywords": [
+    "web"
+  ],
+  "author": "moonrailgun",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/moonrailgun/WebCollector/issues"
+  },
+  "homepage": "https://github.com/moonrailgun/WebCollector#readme"
+}
