@@ -1,7 +1,10 @@
 {
   "name": "demo",
-  "startURL":"http://tieba.baidu.com/",
+  "startURL":"http://news.baidu.com/",
+  "timeour":30000,
+  "encoding":"GBK",
   "selectior":{
-    "title":"title"
+    "title":"title",
+    "content":"div.hotnews ul li"
   }
 }
