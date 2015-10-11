@@ -1,3 +1,7 @@
 {
-  "name": "demo"
+  "name": "demo",
+  "startURL":"http://tieba.baidu.com/",
+  "selectior":{
+    "title":"title"
+  }
 }
