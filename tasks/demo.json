@@ -8,8 +8,10 @@
     "content":{
       "mulPage":false,
       "joint":false,
+      "type":"text",
       "subURL":"div#content .box_cont ul li a",
-      "subTitle":"div#content .box_cont ul li span"
+      "subTitle":"div#content .box_cont ul li span",
+      "subContent":"div#wrapbig .readWrap .textbox"
     }
   }
 }

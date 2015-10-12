@@ -168,9 +168,26 @@ function AnalysisPage(doc, opt) {
                  urlList[index] = oldcontent;
              });
         }
+        var titleList = [];
         $(subTitle).text(function (index, oldcontent) {
-            pageContent += oldcontent.trim() + "\t" + urlList[index] + "\n";
+            titleList.push(oldcontent.trim());
         });
+
+        //查找子页内容
+        for(var i = 0;i<1;i++)
+        {
+            var url = urlList[i];
+            httpHelper.get(url, opt.timeout, function (err, val,url) {
+                if (err) {
+                    console.error(err);
+                }
+                else {
+                    var $temp = cheerio.load(val, {decodeEntities: false});
+                    console.log($temp(content.subContent).html());
+                    console.log("--------------------------------------"+url);
+                }
+            }, opt.encoding);
+        }
     }
 
     console.log(pageContent);

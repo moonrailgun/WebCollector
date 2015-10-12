@@ -28,12 +28,12 @@ var httpHelper = {
                     _data = iconv.decode(bufferHelper.toBuffer());
                 }
 
-                callback(null, _data);
+                callback(null, _data,options.href);
             });
         });
 
         req.on('error', function (err) {
-            callback(err);
+            callback(err,'',options.href);
         });
 
         var content = qs.stringify(data);
@@ -42,7 +42,7 @@ var httpHelper = {
         if (timeout && timeout > 0) {
             req.setTimeout(timeout, function () {
                 console.log('request timeout');
-                callback(new Error('request timeout'), '');
+                callback(new Error('request timeout'), '',options.href);
             });
         }
 
