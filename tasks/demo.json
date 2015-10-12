@@ -1,17 +1,16 @@
 {
   "name": "demo",
-  "startURL":"http://read.qidian.com/BookReader/Ou8OEduEwkM1.aspx",
-  "timeour":30000,
-  "encoding":"UTF-8",
-  "selectior":{
-    "title":"title",
-    "content":{
-      "mulPage":false,
-      "joint":false,
-      "type":"text",
-      "subURL":"div#content .box_cont ul li a",
-      "subTitle":"div#content .box_cont ul li span",
-      "subContent":"div#wrapbig .readWrap .textbox"
+  "startURL": "http://www.xs8.cn/book/257486/readbook.html",
+  "timeout": 30000,
+  "encoding": "UTF-8",
+  "selectior": {
+    "content": {
+      "mulPage": false,
+      "joint": false,
+      "type": "text",
+      "subURL": "div.mod .mod_container ul li a",
+      "subTitle": "div.mod .mod_container ul li a",
+      "subContent": "div.read_wrap .readmain .chapter_content"
     }
   }
 }
