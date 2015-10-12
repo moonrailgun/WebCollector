@@ -3,6 +3,7 @@
 #################
 .idea/
 node_modules/
+tasks/mrg.json
 
 #################
 ## Eclipse

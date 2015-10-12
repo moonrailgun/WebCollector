@@ -132,34 +132,49 @@ function RunTask(task) {
         var startURL = json.startURL;
         var timeout = json.timeout;
         var encoding = json.encoding;
-        httpHelper.get(startURL,timeout,function(err,val){
-            if(err){
+        httpHelper.get(startURL, timeout, function (err, val) {
+            if (err) {
                 console.error(err);
             }
-            else{
-                AnalysisPage(val,json);
+            else {
+                AnalysisPage(val, json);
             }
-        },encoding);
+        }, encoding);
     });
 }
 
 //解析页面
 function AnalysisPage(doc, opt) {
+    console.time("AnalysisPage");
     var selectior = opt.selectior;
     var title = selectior.title;
     var content = selectior.content;
-    var $ = cheerio.load(doc,{decodeEntities: false});
+    var $ = cheerio.load(doc, {decodeEntities: false});
 
     var pageTitle = $(title).html();
     var pageContent = "";
-    if(typeof content == "string"){
-        $(content).text(function(index,oldcontent){
-            console.log(index);
+    if (typeof content == "string") {
+        $(content).text(function (index, oldcontent) {
             pageContent += oldcontent.trim() + "\n";
+        });
+    }
+    else if (typeof content == "object") {
+        var subURL = content.subURL;
+        var subTitle = content.subTitle;
+        var urlList = [];
+        var par = subURL.split(" ");
+        if(par[par.length - 1] == "a"){
+             $(subURL).attr('href',function (index, oldcontent) {
+                 urlList[index] = oldcontent;
+             });
+        }
+        $(subTitle).text(function (index, oldcontent) {
+            pageContent += oldcontent.trim() + "\t" + urlList[index] + "\n";
         });
     }
 
     console.log(pageContent);
+    console.timeEnd("AnalysisPage");
 }
 
 function SavePic(url, dirpath) {

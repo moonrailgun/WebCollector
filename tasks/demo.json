@@ -1,10 +1,15 @@
 {
   "name": "demo",
-  "startURL":"http://news.baidu.com/",
+  "startURL":"http://read.qidian.com/BookReader/Ou8OEduEwkM1.aspx",
   "timeour":30000,
-  "encoding":"GBK",
+  "encoding":"UTF-8",
   "selectior":{
     "title":"title",
-    "content":"div.hotnews ul li"
+    "content":{
+      "mulPage":false,
+      "joint":false,
+      "subURL":"div#content .box_cont ul li a",
+      "subTitle":"div#content .box_cont ul li span"
+    }
   }
 }
