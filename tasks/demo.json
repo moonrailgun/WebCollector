@@ -1,16 +1,23 @@
 {
   "name": "demo",
-  "startURL": "http://www.xs8.cn/book/257486/readbook.html",
+  "startURL": "http://www.xs8.cn/top/whits.html",
   "timeout": 30000,
   "encoding": "UTF-8",
   "selectior": {
+    "mulPage": false,
+    "joint": false,
+    "nextPage":"",
+    "type": "text",
     "content": {
-      "mulPage": false,
-      "joint": false,
-      "type": "text",
-      "subURL": "div.mod .mod_container ul li a",
-      "subTitle": "div.mod .mod_container ul li a",
-      "subContent": "div.read_wrap .readmain .chapter_content"
+      "subURL": "div.main ul li span.bname a",
+      "subTitle": "div.main ul li span.bname a",
+      "subContent": {
+        "subURL":"div.focus_main .right .book_actionbtn .readbtn a.a_list",
+        "subContent":{
+          "subURL":"div.wrap_readlist .mod_container li a",
+          "subContent":"div.readmain .chapter_content"
+        }
+      }
     }
   }
 }
