@@ -5,6 +5,7 @@
 var cheerio = require("cheerio");    //引用cheerio模块,使在服务器端像在客户端上操作DOM,不用正则表达式
 var httpHelper = require('./httpHelper');
 var fs = require('fs');//文件管理模块
+var _url = require('url');//路径解析
 
 var taskpath = './tasks';//任务文件默认路径
 var progresspath = './progress';//任务文件默认路径
@@ -96,7 +97,7 @@ function AnalysisRootPage(doc, opt) {
 
 //分析页面，从当前页获取子页URL，title。然后进入下载子页获取内容
 //当前页面，内容选择器，任务设置
-//todo mulPage,joint,type处理，并发采集上限
+//todo mulPage,joint,type,nextPage处理，并发采集上限
 function AnalysisSubPage(doc, content, parent, opt) {
     var $ = cheerio.load(doc, {decodeEntities: false});
     var parentUrl = parent.url;
@@ -145,11 +146,11 @@ function AnalysisSubPage(doc, content, parent, opt) {
 
         //todo 在多层迭代中需要进行修改
         var result = {
-            url:parentUrl,
-            title:parentTitle,
-            content:pageContent
+            url: parentUrl,
+            title: parentTitle,
+            content: pageContent
         };
-        if(result){
+        if (result) {
             currentTask.result.push(result);
             SaveProgress(currentTask);
         }
@@ -159,12 +160,13 @@ function AnalysisSubPage(doc, content, parent, opt) {
 //生成数据地图
 //传入任务json数据。返回地图
 //todo
-function GenerateCollectorMap(task){
+function GenerateCollectorMap(task) {
     var map = {};
     var pageNum = 0;
-    var ErgodicContent = function(url, content , container){
-        if (typeof content == "object"){
-            httpHelper.get(url, task.timeout, function(err, val){
+    //获取层级数据,参数为抓取页面的URL，抓取的选择器，结果放进地图对象的容器数组
+    var ErgodicContent = function (url, content, container) {
+        if (typeof content == "object") {
+            httpHelper.get(url, task.timeout, function (err, val) {
                 if (err) {
                     console.error(err);
                 }
@@ -173,7 +175,7 @@ function GenerateCollectorMap(task){
                     var subcontent = content.subContent;
                     var urlList = [];
                     var par = content.subURL.split(" ");
-                    if (par[par.length - 1] == "a") {
+                    if (par[par.length - 1] == "a" || par[par.length - 1].indexOf("a") == 0) {
                         $(content.subURL).attr('href', function (index, oldcontent) {
                             urlList[index] = oldcontent;//将数据按顺序放到数组中
                         });
@@ -182,38 +184,73 @@ function GenerateCollectorMap(task){
                     $(content.subTitle).text(function (index, oldcontent) {
                         titleList[index] = oldcontent.trim();
                     });
-                    pageNum += urlList.length;
-                    for(var i = 0;i<urlList.length;i++){
-                        container.url = urlList[i];
-                        container.title = titleList[i];
-                        container.content = {};
-                        ErgodicContent(container.url, subcontent, container.content);//迭代
+
+                    //顺序添加数据
+                    for (var i = 0; i < urlList.length; i++) {
+                        var data = {};
+                        data.title = titleList[i];
+                        data.url = urlList[i];
+                        if (typeof subcontent == "object") {
+                            data.content = [];
+                            pageNum = 0;//todo
+                        }
+                        else{
+                            pageNum += urlList.length;//todo
+                        }
+                        container[i] = data;
+
+                        var newURL = _url.resolve(url, data.url);
+                        ErgodicContent(newURL, subcontent, container[i].content);//迭代
                     }
                 }
-            },task.encoding);
-        }else if(typeof content == "string"){
+            }, task.encoding);
+        }
+        else if (typeof content == "string") {
             //容器为空
-            pageNum--;
-            if(pageNum == 0){
-                console.log("所有任务完成");
+            pageNum--;//todo
+            if (pageNum == 0) {
+                console.log("遍历地图已经生成完毕");
                 console.log(map);
             }
+        }
+    };
+    //获取最终内容选择器
+    var ErgodicSelectior = function (content) {
+        if (typeof content == "object") {
+            return ErgodicSelectior(content.subContent)
+        }
+        else if (typeof content == "string") {
+            return content;
         }
     };
 
     map.name = task.name;
     map.root = task.startURL;
-    map.content = {};
-    ErgodicContent(task.startURL ,task.selectior.content, map.content);
+    map.selectior = {
+        mulPage: task.mulPage,
+        joint: task.joint,
+        type: task.type,
+        content: ErgodicSelectior(task.selectior.content)
+    };
+    map.content = [];
+    ErgodicContent(task.startURL, task.selectior.content, map.content);
 }
 
 //采集数据进度存储
 function SaveProgress(taskjson) {
-    var fn = progresspath + '/' + taskjson.name+".json";
+    var fn = progresspath + '/' + taskjson.name + ".json";
     fs.writeFile(fn, JSON.stringify(taskjson), function (err) {
         if (err) throw err;
         console.log('进度已经被保存'); //文件被保存
     })
+}
+
+//保存数据简单封装
+function SaveFile(path, text, func) {
+    fs.write(path, text, function (err) {
+        if (err) throw err;
+        func();
+    });
 }
 
 exports.LoadTask = LoadTask;
