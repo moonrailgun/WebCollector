@@ -28,7 +28,7 @@ var httpHelper = {
                     _data = iconv.decode(bufferHelper.toBuffer());
                 }
 
-                callback(null, _data,options.href);
+                callback(null, _data, options.href);
             });
         });
 
