@@ -2,7 +2,7 @@
  * Created by Chen on 2015-10-10.
  */
 
-console.time('boot');
+console.time('启动完毕，用时：');
 var collector = require('./lib/collector');
 
 var taskList = collector.LoadTask();
@@ -30,6 +30,7 @@ if (arguments.length <= 0) {
             if (err) throw err;
 
             var json = JSON.parse(data);
+            console.timeEnd('启动完毕，用时：');
             collector.RunTask(json);
         });
     }
