@@ -1,7 +1,9 @@
 /**
  * Created by Chen on 2015-10-10.
  */
-var collector = require('./collector');
+
+console.time('boot');
+var collector = require('./lib/collector');
 
 var taskList = collector.LoadTask();
 var arguments = process.argv.splice(2);
@@ -21,7 +23,15 @@ if (arguments.length <= 0) {
         console.log("没有找到该任务，请重试...");
     } else {
         console.log("开始执行采集任务。请稍后...");
-        collector.RunTask(task);
+        if (task.indexOf('.json') < 0) {
+            task += '.json';
+        }
+        require('fs').readFile('./tasks/' + task, {encoding: "utf-8"}, function (err, data) {
+            if (err) throw err;
+
+            var json = JSON.parse(data);
+            collector.RunTask(json);
+        });
     }
 }
 
@@ -29,7 +39,7 @@ if (arguments.length <= 0) {
  * @return {boolean}
  */
 function HaveTask(task, tasklist) {
-    for (var i in tasklist) {
+    for (var i = 0; i < tasklist.length; i++) {
         if (task == tasklist[i]) {
             return true;
         }
